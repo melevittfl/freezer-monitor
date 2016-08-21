@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/heartbeat')
 def heartbeat():
-    freezer_temp = { 'temp': '18C' }
+    freezer_temp = { 'temp': '-18C' }
     return jsonify(**freezer_temp)
 
 
