@@ -1,0 +1,4 @@
+*.log
+data.pkl
+config.py
+.idea/
