@@ -7,6 +7,7 @@ import pickle
 import logging
 import datetime
 import fcntl
+import socket
 
 from config import *
 
@@ -48,14 +49,15 @@ def store_last_state(state):
 
 
 def net_up():
-    resp = make_request('http://www.google.com')
-
-    if resp is not None:
-        if resp.status_code == requests.codes.ok:
-            return True
-        else:
-            return False
-    else:
+    """
+    Test if the net is up by making a TCP connection to google's public DNS server
+    :return: True if the connection succeeds, false otherwise
+    """
+    try:
+        socket.setdefaulttimeout(3)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        return True
+    except:
         return False
 
 
