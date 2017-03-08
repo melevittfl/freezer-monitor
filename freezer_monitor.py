@@ -8,10 +8,11 @@ import logging
 import datetime
 import fcntl
 import socket
-
 from config import *
 
 import sqlite3
+from sonos.sonosfind import found_kitchen_sonos
+
 
 STATE_FILE = 'data.pkl'
 
@@ -23,15 +24,6 @@ class State(Enum):
     ON = 1
     OFF = 2
     UNKNOWN = 3
-
-
-def make_request(url):
-    try:
-        r = requests.get(url)
-    except requests.exceptions.RequestException as request_error:  # This is the correct syntax
-        logging.error(request_error)
-        return None
-    return r
 
 
 def load_last_state():
@@ -56,6 +48,7 @@ def net_up():
     try:
         socket.setdefaulttimeout(3)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        logging.info("Network Up")
         return True
     except:
         return False
@@ -65,19 +58,14 @@ def site_state():
     current_state = State.UNKNOWN
     if net_up():
 
-        resp = make_request(SITE)
-
-        if resp is not None:
-            if resp.status_code == requests.codes.ok:
-                logging.warning(resp.text)
-                current_state = State.ON
-            else:
-                current_state = State.OFF
+        if found_kitchen_sonos(KITCHEN_USN):
+            current_state = State.ON
         else:
+            logging.warning("Kitchen Sonos not found")
             current_state = State.OFF
 
     store_last_state(current_state)
-    logging.info("site status is %s", current_state)
+    logging.info("Power status is %s", current_state)
     return current_state
 
 
@@ -106,7 +94,7 @@ def text_alert(current_state):
 
 def main():
 
-    logging.basicConfig(level=logging.WARN, filename='monitor.log',
+    logging.basicConfig(level=logging.INFO, filename='checksites.log',
                         format='%(asctime)s %(levelname)s: %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -117,6 +105,8 @@ def main():
     if state_changed(last_state, current_state):
         logging.error("Power status changed. Is now %s", current_state)
         text_alert(current_state)
+    else:
+        logging.info("Power status unchanged")
 
 if __name__ == '__main__':
     f = open('.lock', 'w')
@@ -129,9 +119,3 @@ if __name__ == '__main__':
             sys.exit(-1)
 
     main()
-
-
-
-
-
-

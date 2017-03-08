@@ -3,7 +3,5 @@ NEXMO_API_SECRET = "API SECRET HERE"
 NEXMO_NUMBER = "SENDING NUMBER HERE"
 
 MY_NUMBER = "DESTINATION NUMBER HERE"
-
-# URL to where the heartbeat server is running
-SITE = "http://server:5000/heartbeat"
+KITCHEN_USN = b'12345678901234567'
 
