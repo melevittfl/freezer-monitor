@@ -94,7 +94,7 @@ def text_alert(current_state):
 
 def main():
 
-    logging.basicConfig(level=logging.INFO, filename='checksites.log',
+    logging.basicConfig(level=LOGLEVEL, filename='checksites.log',
                         format='%(asctime)s %(levelname)s: %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
 
