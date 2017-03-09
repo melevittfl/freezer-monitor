@@ -1,3 +1,4 @@
+*.log.*
 *.log
 data.pkl
 config.py

@@ -5,4 +5,28 @@ NEXMO_NUMBER = "SENDING NUMBER HERE"
 MY_NUMBER = "DESTINATION NUMBER HERE"
 KITCHEN_USN = b'12345678901234567'
 
-LOGLEVEL = logging.WARN
+
+LOG_SETTINGS = {
+    'version': 1,
+    'root': {
+        'level': 'INFO',
+        'handlers': ['file'],
+    },
+    'handlers': {
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': 'INFO',
+            'formatter': 'normal',
+            'filename': 'checksites.log',
+            'mode': 'a',
+            'maxBytes': 10485760,
+            'backupCount': 5,
+        },
+    },
+    'formatters': {
+        'normal': {
+            'format': '%(asctime)s %(levelname)s: %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        }
+    },
+}

@@ -5,6 +5,7 @@ import requests
 from enum import Enum
 import pickle
 import logging
+import logging.config
 import datetime
 import fcntl
 import socket
@@ -94,10 +95,7 @@ def text_alert(current_state):
 
 def main():
 
-    logging.basicConfig(level=LOGLEVEL, filename='checksites.log',
-                        format='%(asctime)s %(levelname)s: %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S')
-
+    logging.config.dictConfig(LOG_SETTINGS)
     last_state = load_last_state()
 
     current_state = site_state()
