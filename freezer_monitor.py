@@ -47,23 +47,21 @@ def net_up():
     :return: True if the connection succeeds, false otherwise
     """
     try:
-        socket.setdefaulttimeout(3)
+        socket.setdefaulttimeout(5)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
         logging.info("Network Up")
         return True
     except:
+        logging.error("Network not available")
         return False
 
 
 def site_state():
-    current_state = State.UNKNOWN
-    if net_up():
-
-        if found_kitchen_sonos(KITCHEN_USN):
-            current_state = State.ON
-        else:
-            logging.warning("Kitchen Sonos not found")
-            current_state = State.OFF
+    if found_kitchen_sonos(KITCHEN_USN):
+        current_state = State.ON
+    else:
+        logging.warning("Kitchen Sonos not found")
+        current_state = State.OFF
 
     store_last_state(current_state)
     logging.info("Power status is %s", current_state)
@@ -88,23 +86,28 @@ def text_alert(current_state):
               }
 
     url = 'https://rest.nexmo.com/sms/json'
-
-    response = requests.get(url, params=params)
-    logging.warning(response.text)
+    if SEND_TEXTS:
+        response = requests.get(url, params=params)
+        logging.warning(response.text)
+    else:
+        logging.info("Sending texts disabled")
+        logging.warning("Text: {0}".format(message))
 
 
 def main():
 
     logging.config.dictConfig(LOG_SETTINGS)
-    last_state = load_last_state()
+    if net_up():
 
-    current_state = site_state()
+        last_state = load_last_state()
 
-    if state_changed(last_state, current_state):
-        logging.error("Power status changed. Is now %s", current_state)
-        text_alert(current_state)
-    else:
-        logging.info("Power status unchanged")
+        current_state = site_state()
+
+        if state_changed(last_state, current_state):
+            logging.error("Power status changed. Is now %s", current_state)
+            text_alert(current_state)
+        else:
+            logging.info("Power status unchanged")
 
 if __name__ == '__main__':
     f = open('.lock', 'w')
