@@ -52,7 +52,7 @@ def net_up():
         logging.info("Network Up")
         return True
     except:
-        logging.error("Network not available")
+        logging.info("Network not available")
         return False
 
 
