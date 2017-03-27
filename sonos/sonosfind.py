@@ -16,15 +16,20 @@ def found_kitchen_sonos(usn):
     s.settimeout(5)
     s.sendto(msg.encode('utf-8'), ('239.255.255.250', 1900) )
 
-    try:
-        while True:
+    attempts = 3
+
+    while attempts < 3:
+        try:
             data, addr = s.recvfrom(65507)
             #print (addr, data)
             if kitchen_usn.search(data):
                 ip, port = addr
                 return True
-    except socket.timeout:
-        return False
+        except socket.timeout:
+            attempts += 1
+
+
+    return False
 
 if __name__ == '__main__':
     usn = b'5CAAFD77ADE401400'
