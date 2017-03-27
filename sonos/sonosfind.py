@@ -13,7 +13,7 @@ def found_kitchen_sonos(usn):
     kitchen_usn = re.compile(usn)
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    s.settimeout(2)
+    s.settimeout(5)
     s.sendto(msg.encode('utf-8'), ('239.255.255.250', 1900) )
 
     try:
