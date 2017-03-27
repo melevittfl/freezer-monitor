@@ -16,7 +16,7 @@ def found_kitchen_sonos(usn):
     s.settimeout(5)
     s.sendto(msg.encode('utf-8'), ('239.255.255.250', 1900) )
 
-    attempts = 3
+    attempts = 0
 
     while attempts < 3:
         try:
